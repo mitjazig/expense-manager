@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="sl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Seznam stroškov – Moji stroški</title>
+  <meta name="theme-color" content="#0a0a0c" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="icons/icon-192.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800&display=swap"
+  />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="bg-gradient"></div>
+
+  <header class="topbar">
+    <a href="index.html" class="btn btn--icon" aria-label="Nazaj">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M15 18l-6-6 6-6"/>
+      </svg>
+    </a>
+    <h1 class="topbar__title">Seznam stroškov</h1>
+    <span class="topbar__spacer"></span>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <div class="date-range">
+        <div class="field">
+          <label for="date-from">Od</label>
+          <input type="date" id="date-from" />
+        </div>
+        <div class="field">
+          <label for="date-to">Do</label>
+          <input type="date" id="date-to" />
+        </div>
+      </div>
+    </section>
+
+    <section id="edit-panel" class="card hidden">
+      <h2 class="section-title">Uredi strošek</h2>
+      <form id="edit-form" class="expense-form">
+        <div class="amount-field">
+          <label for="edit-amount">Znesek</label>
+          <div class="amount-field__row">
+            <span class="amount-field__currency">€</span>
+            <input type="number" id="edit-amount" step="0.01" min="0" inputmode="decimal" placeholder="0.00" required />
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Kategorija</label>
+          <input type="hidden" id="edit-category" required />
+          <div id="edit-category-picker" class="category-picker"></div>
+        </div>
+
+        <div class="field">
+          <label for="edit-date">Datum</label>
+          <input type="date" id="edit-date" required />
+        </div>
+
+        <div class="field">
+          <label for="edit-note">Opis (neobvezno)</label>
+          <textarea id="edit-note" placeholder="npr. kosilo v mestu z ekipo" maxlength="300" rows="3"></textarea>
+        </div>
+
+        <div class="field">
+          <label for="edit-location">Lokacija (neobvezno)</label>
+          <div class="location-field__row">
+            <input type="text" id="edit-location" placeholder="npr. Mercator, Koper" maxlength="120" />
+            <button type="button" id="edit-btn-locate" class="btn btn--icon" aria-label="Uporabi trenutno lokacijo">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 21s-6.5-5.6-6.5-11A6.5 6.5 0 0 1 12 3.5 6.5 6.5 0 0 1 18.5 10c0 5.4-6.5 11-6.5 11Z"/><circle cx="12" cy="10" r="2.3"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn--primary">Shrani spremembe</button>
+          <button type="button" id="btn-cancel-edit" class="btn btn--ghost">Prekliči</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="card summary">
+      <div class="summary__total">
+        <span class="summary__total-label">Skupaj v obdobju</span>
+        <span id="range-total" class="summary__total-value">0,00 €</span>
+      </div>
+    </section>
+
+    <section class="card">
+      <div id="expense-list" class="expense-list"></div>
+      <div id="empty-state" class="empty-state hidden">
+        <span class="empty-state__icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 2h12v19l-3-2-3 2-3-2-3 2Z"/><path d="M8 7h8M8 11h8M8 15h5"/>
+          </svg>
+        </span>
+        <p>Ni stroškov v izbranem obdobju.</p>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="js/seznam.js"></script>
+</body>
+</html>
