@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="sl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Analitika – Moji stroški</title>
+  <meta name="theme-color" content="#0a0a0c" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="icons/icon-192.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800&display=swap"
+  />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="bg-gradient"></div>
+
+  <header class="topbar">
+    <a href="index.html" class="btn btn--icon" aria-label="Nazaj">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M15 18l-6-6 6-6"/>
+      </svg>
+    </a>
+    <h1 class="topbar__title">Analitika</h1>
+    <span class="topbar__spacer"></span>
+  </header>
+
+  <main class="container">
+    <section class="month-nav">
+      <button id="btn-prev-month" class="btn btn--icon" type="button" aria-label="Prejšnji mesec">‹</button>
+      <span id="month-label" class="month-label"></span>
+      <button id="btn-next-month" class="btn btn--icon" type="button" aria-label="Naslednji mesec">›</button>
+    </section>
+
+    <section class="stat-row">
+      <div class="card stat-card">
+        <span class="stat-card__icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="9"/><path d="M14.8 9.5a3 3 0 0 0-2.8-1.5c-1.9 0-3.3 1.8-3.3 4s1.4 4 3.3 4a3 3 0 0 0 2.8-1.5"/><path d="M7.5 10.5h5M7.5 13.5h5"/>
+          </svg>
+        </span>
+        <span class="stat-card__label">Skupaj</span>
+        <span id="stat-total" class="stat-card__value">0,00 €</span>
+      </div>
+      <div class="card stat-card">
+        <span class="stat-card__icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18"/><path d="M8 3v4M16 3v4"/>
+          </svg>
+        </span>
+        <span class="stat-card__label">Povprečno/dan</span>
+        <span id="stat-avg" class="stat-card__value">0,00 €</span>
+      </div>
+      <div class="card stat-card">
+        <span class="stat-card__icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/>
+          </svg>
+        </span>
+        <span class="stat-card__label">Vs. prejšnji mesec</span>
+        <span id="stat-change" class="stat-card__value">0 %</span>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 class="section-title">Stroški po kategorijah</h2>
+      <div class="chart-wrap chart-wrap--doughnut">
+        <canvas id="chart-categories"></canvas>
+      </div>
+      <div id="chart-categories-empty" class="empty-state hidden">
+        <span class="empty-state__icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 19V9"/><path d="M10 19V5"/><path d="M16 19v-7"/><path d="M4 19h16"/>
+          </svg>
+        </span>
+        <p>Ni podatkov za ta mesec.</p>
+      </div>
+      <div id="category-legend" class="category-legend"></div>
+    </section>
+
+    <section class="card">
+      <h2 class="section-title">Zadnjih 6 mesecev</h2>
+      <div class="chart-wrap">
+        <canvas id="chart-trend"></canvas>
+      </div>
+    </section>
+  </main>
+
+  <script src="vendor/chart.umd.min.js"></script>
+  <script type="module" src="js/analitika.js"></script>
+</body>
+</html>
