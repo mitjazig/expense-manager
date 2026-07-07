@@ -1,4 +1,4 @@
-const CACHE = 'expense-manager-static-v10';
+const CACHE = 'expense-manager-static-v12';
 
 const ASSETS = [
   './',
@@ -15,6 +15,7 @@ const ASSETS = [
   './js/analitika.js',
   './js/seznam.js',
   './js/icons.js',
+  './js/dialogs.js',
   './vendor/chart.umd.min.js',
   './manifest.webmanifest',
   './icons/icon.svg',

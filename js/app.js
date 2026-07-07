@@ -3,6 +3,7 @@ import { addExpense, getAllExpenses, importExpenses } from './db.js';
 import { setupInstallUI } from './install-ui.js';
 import { initPwaUpdates } from './pwa-update.js';
 import { categoryIconSvg } from './icons.js';
+import { showAlert, showConfirm } from './dialogs.js';
 
 const $ = (sel) => document.querySelector(sel);
 
@@ -205,15 +206,23 @@ function setupBackup() {
         (r) => r && typeof r.amount === 'number' && typeof r.category === 'string' && typeof r.date === 'string',
       );
       if (valid.length === 0) {
-        alert('Datoteka ne vsebuje veljavnih stroškov.');
+        await showAlert('Datoteka ne vsebuje veljavnih stroškov.', { title: 'Neveljavna datoteka' });
         return;
       }
-      if (!confirm(`Uvozim ${valid.length} stroškov iz datoteke?`)) return;
+      const confirmed = await showConfirm(`Uvozim ${valid.length} stroškov iz datoteke?`, {
+        title: 'Uvoz podatkov',
+        icon: 'upload',
+        tone: 'accent',
+        confirmLabel: 'Uvozi',
+      });
+      if (!confirmed) return;
 
       await importExpenses(valid);
       await reload();
     } catch {
-      alert('Datoteke ni bilo mogoče prebrati. Preveri, da gre za veljaven izvoz JSON.');
+      await showAlert('Datoteke ni bilo mogoče prebrati. Preveri, da gre za veljaven izvoz JSON.', {
+        title: 'Napaka pri uvozu',
+      });
     }
   });
 }

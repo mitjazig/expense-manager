@@ -1,6 +1,7 @@
 import { CATEGORIES } from './config.js';
 import { getAllExpenses, updateExpense, deleteExpense } from './db.js';
 import { categoryIconSvg, iconSvg } from './icons.js';
+import { showConfirm } from './dialogs.js';
 
 const $ = (sel) => document.querySelector(sel);
 
@@ -67,6 +68,12 @@ function dayLabel(dateStr) {
   const d = new Date(dateStr + 'T00:00:00');
   const label = d.toLocaleDateString('sl-SI', { weekday: 'long', day: 'numeric', month: 'long' });
   return label.charAt(0).toUpperCase() + label.slice(1);
+}
+
+function confirmDelete(expense) {
+  const cat = categoryMap.get(expense.category) || { label: expense.category };
+  const desc = `${cat.label} · ${formatMoney(expense.amount)} · ${dayLabel(expense.date)}`;
+  return showConfirm(desc, { title: 'Izbriši strošek?', icon: 'trash', tone: 'danger', confirmLabel: 'Izbriši' });
 }
 
 function filteredExpenses() {
@@ -211,7 +218,10 @@ function setupListActions() {
     const deleteBtn = event.target.closest('[data-delete]');
     if (deleteBtn) {
       const id = Number(deleteBtn.dataset.delete);
-      if (!confirm('Izbriši ta strošek?')) return;
+      const expense = allExpenses.find((e) => e.id === id);
+      if (!expense) return;
+      const confirmed = await confirmDelete(expense);
+      if (!confirmed) return;
       if (editingId === id) exitEditMode();
       await deleteExpense(id);
       await reload();
