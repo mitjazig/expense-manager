@@ -3,6 +3,8 @@ import { addExpense, getAllExpenses, importExpenses } from './db.js';
 import { setupInstallUI } from './install-ui.js';
 import { initPwaUpdates } from './pwa-update.js';
 import { categoryIconSvg } from './icons.js';
+import { showAlert, showConfirm } from './dialogs.js';
+import { setupReceiptField } from './receipt.js';
 
 const $ = (sel) => document.querySelector(sel);
 
@@ -111,6 +113,19 @@ function setupForm() {
   const selectCategory = setupCategoryPicker();
   $('#date').value = todayISO();
 
+  const receiptField = setupReceiptField({
+    inputId: 'receipt-input',
+    btnId: 'receipt-btn',
+    previewId: 'receipt-preview',
+    previewImgId: 'receipt-preview-img',
+    removeId: 'receipt-remove',
+    statusId: 'receipt-status',
+    autoDetect: true,
+    onAmountDetected: (amount) => {
+      if (!$('#amount').value) $('#amount').value = amount.toFixed(2);
+    },
+  });
+
   $('#btn-locate').addEventListener('click', () => {
     if (!navigator.geolocation) return;
     navigator.geolocation.getCurrentPosition(
@@ -134,11 +149,14 @@ function setupForm() {
 
     if (!Number.isFinite(amount) || amount <= 0 || !category || !date) return;
 
-    await addExpense({ amount, category, date, note, location, createdAt: Date.now() });
+    const receiptImage = receiptField.getBlob();
+
+    await addExpense({ amount, category, date, note, location, receiptImage, createdAt: Date.now() });
 
     form.reset();
     $('#date').value = date;
     selectCategory(CATEGORIES[0].id);
+    receiptField.clear();
 
     const [y, m] = date.split('-').map(Number);
     viewYear = y;
@@ -183,8 +201,9 @@ function downloadJson(filename, data) {
 function setupBackup() {
   $('#btn-export').addEventListener('click', async () => {
     const data = await getAllExpenses();
+    const exportable = data.map(({ receiptImage, ...rest }) => rest);
     const stamp = todayISO();
-    downloadJson(`moji-stroski-${stamp}.json`, data);
+    downloadJson(`moji-stroski-${stamp}.json`, exportable);
   });
 
   $('#btn-import').addEventListener('click', () => {
@@ -205,15 +224,23 @@ function setupBackup() {
         (r) => r && typeof r.amount === 'number' && typeof r.category === 'string' && typeof r.date === 'string',
       );
       if (valid.length === 0) {
-        alert('Datoteka ne vsebuje veljavnih stroškov.');
+        await showAlert('Datoteka ne vsebuje veljavnih stroškov.', { title: 'Neveljavna datoteka' });
         return;
       }
-      if (!confirm(`Uvozim ${valid.length} stroškov iz datoteke?`)) return;
+      const confirmed = await showConfirm(`Uvozim ${valid.length} stroškov iz datoteke?`, {
+        title: 'Uvoz podatkov',
+        icon: 'upload',
+        tone: 'accent',
+        confirmLabel: 'Uvozi',
+      });
+      if (!confirmed) return;
 
       await importExpenses(valid);
       await reload();
     } catch {
-      alert('Datoteke ni bilo mogoče prebrati. Preveri, da gre za veljaven izvoz JSON.');
+      await showAlert('Datoteke ni bilo mogoče prebrati. Preveri, da gre za veljaven izvoz JSON.', {
+        title: 'Napaka pri uvozu',
+      });
     }
   });
 }

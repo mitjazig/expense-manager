@@ -1,4 +1,4 @@
-export const APP_VERSION = '7';
+export const APP_VERSION = '10';
 
 export const CATEGORIES = [
   { id: 'hrana', label: 'Hrana', color: '#3b82f6' },
