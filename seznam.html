@@ -82,6 +82,22 @@
           </div>
         </div>
 
+        <div class="field">
+          <label>Fotografija računa (neobvezno)</label>
+          <input type="file" id="edit-receipt-input" accept="image/*" capture="environment" class="hidden" />
+          <button type="button" id="edit-receipt-btn" class="btn btn--ghost receipt-add-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" class="btn__icon">
+              <path d="M4 8h3l1.5-2h7L17 8h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Z"/><circle cx="12" cy="13" r="3.5"/>
+            </svg>
+            Dodaj fotografijo
+          </button>
+          <div id="edit-receipt-preview" class="receipt-preview hidden">
+            <img id="edit-receipt-preview-img" alt="Račun" />
+            <button type="button" id="edit-receipt-remove" class="expense-item__delete" aria-label="Odstrani fotografijo">×</button>
+          </div>
+          <p id="edit-receipt-status" class="receipt-status hidden"></p>
+        </div>
+
         <div class="form-actions">
           <button type="submit" class="btn btn--primary">Shrani spremembe</button>
           <button type="button" id="btn-cancel-edit" class="btn btn--ghost">Prekliči</button>

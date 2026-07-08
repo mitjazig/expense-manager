@@ -227,6 +227,69 @@ svg {
   gap: 0.6rem;
 }
 
+.receipt-add-btn {
+  width: 100%;
+  justify-content: center;
+}
+
+.receipt-preview {
+  position: relative;
+  width: 100%;
+  max-width: 12rem;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 1px solid var(--card-border);
+}
+
+.receipt-preview img {
+  display: block;
+  width: 100%;
+  max-height: 14rem;
+  object-fit: cover;
+}
+
+.receipt-preview .expense-item__delete {
+  position: absolute;
+  top: 0.4rem;
+  right: 0.4rem;
+}
+
+.receipt-status {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.expense-item__receipt {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--card-border);
+  color: var(--text-secondary);
+  border-radius: 50%;
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0.4rem;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.85);
+  padding: 1.5rem;
+  cursor: zoom-out;
+}
+
+.lightbox img {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: var(--radius-sm);
+}
+
 .form-actions .btn--primary {
   flex: 1;
 }

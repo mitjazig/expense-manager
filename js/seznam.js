@@ -2,6 +2,7 @@ import { CATEGORIES } from './config.js';
 import { getAllExpenses, updateExpense, deleteExpense } from './db.js';
 import { categoryIconSvg, iconSvg } from './icons.js';
 import { showConfirm } from './dialogs.js';
+import { setupReceiptField } from './receipt.js';
 
 const $ = (sel) => document.querySelector(sel);
 
@@ -10,6 +11,7 @@ const categoryMap = new Map(CATEGORIES.map((c) => [c.id, c]));
 let allExpenses = [];
 let editingId = null;
 let selectCategory;
+let receiptField;
 
 function formatMoney(amount) {
   return amount.toLocaleString('sl-SI', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
@@ -70,6 +72,22 @@ function dayLabel(dateStr) {
   return label.charAt(0).toUpperCase() + label.slice(1);
 }
 
+function ensureLightbox() {
+  if ($('#receipt-lightbox')) return;
+  const el = document.createElement('div');
+  el.id = 'receipt-lightbox';
+  el.className = 'lightbox hidden';
+  el.innerHTML = `<img id="receipt-lightbox-img" alt="Račun" />`;
+  el.addEventListener('click', () => el.classList.add('hidden'));
+  document.body.appendChild(el);
+}
+
+function openLightbox(blob) {
+  ensureLightbox();
+  $('#receipt-lightbox-img').src = URL.createObjectURL(blob);
+  $('#receipt-lightbox').classList.remove('hidden');
+}
+
 function confirmDelete(expense) {
   const cat = categoryMap.get(expense.category) || { label: expense.category };
   const desc = `${cat.label} · ${formatMoney(expense.amount)} · ${dayLabel(expense.date)}`;
@@ -124,6 +142,7 @@ function renderList(list) {
                 ${e.location ? `<span class="expense-item__location">${iconSvg('pin')}${escapeHtml(e.location)}</span>` : ''}
               </div>
               <span class="expense-item__amount">${formatMoney(e.amount)}</span>
+              ${e.receiptImage ? `<button type="button" class="expense-item__receipt" data-receipt="${e.id}" aria-label="Poglej fotografijo računa">${iconSvg('camera')}</button>` : ''}
               <button type="button" class="expense-item__delete" data-delete="${e.id}" aria-label="Izbriši">×</button>
             </div>`;
         })
@@ -155,6 +174,7 @@ function exitEditMode() {
   editingId = null;
   $('#edit-panel').classList.add('hidden');
   $('#edit-form').reset();
+  receiptField.clear();
 }
 
 function enterEditMode(expense) {
@@ -164,6 +184,7 @@ function enterEditMode(expense) {
   $('#edit-note').value = expense.note ?? '';
   $('#edit-location').value = expense.location ?? '';
   selectCategory(expense.category);
+  receiptField.setBlob(expense.receiptImage || null);
   $('#edit-panel').classList.remove('hidden');
   render();
   $('#edit-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -171,6 +192,15 @@ function enterEditMode(expense) {
 
 function setupEditForm() {
   selectCategory = setupCategoryPicker();
+  receiptField = setupReceiptField({
+    inputId: 'edit-receipt-input',
+    btnId: 'edit-receipt-btn',
+    previewId: 'edit-receipt-preview',
+    previewImgId: 'edit-receipt-preview-img',
+    removeId: 'edit-receipt-remove',
+    statusId: 'edit-receipt-status',
+    autoDetect: false,
+  });
 
   $('#edit-btn-locate').addEventListener('click', () => {
     if (!navigator.geolocation) return;
@@ -205,6 +235,7 @@ function setupEditForm() {
       date,
       note,
       location,
+      receiptImage: receiptField.getBlob(),
       createdAt: existing?.createdAt ?? Date.now(),
     });
 
@@ -225,6 +256,14 @@ function setupListActions() {
       if (editingId === id) exitEditMode();
       await deleteExpense(id);
       await reload();
+      return;
+    }
+
+    const receiptBtn = event.target.closest('[data-receipt]');
+    if (receiptBtn) {
+      const id = Number(receiptBtn.dataset.receipt);
+      const expense = allExpenses.find((e) => e.id === id);
+      if (expense?.receiptImage) openLightbox(expense.receiptImage);
       return;
     }
 
